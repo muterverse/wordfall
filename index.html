@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Falling Text with Enter Button</title>
+  <title>Falling Text with Fixed Ground</title>
   <style>
     html, body {
       margin: 0;
@@ -23,6 +23,17 @@
       overflow: hidden;
     }
 
+    .ground {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 20px; /* 바닥의 두께 */
+      background: #555; /* 바닥 색상 */
+      top: 1080px; /* 바닥의 고정 위치 */
+      transform: translateY(-100%);
+    }
+
     .input-container {
       position: absolute;
       top: 50%; 
@@ -31,8 +42,6 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 10px;
-      box-sizing: border-box;
     }
 
     #textInput {
@@ -73,23 +82,6 @@
       font-weight: bold;
       color: #fff; /* 글자 색상을 흰색으로 */
     }
-
-    @media (max-width: 600px) {
-      .input-container {
-        flex-direction: column; /* 세로 정렬 */
-        gap: 15px;
-      }
-
-      #textInput {
-        width: 90%; /* 모바일 화면 크기에 맞게 */
-      }
-
-      .enter-button {
-        width: 90%; /* 모바일 화면에서 버튼도 동일 너비 */
-        height: 50px;
-        font-size: 18px;
-      }
-    }
   </style>
 </head>
 <body>
@@ -102,16 +94,19 @@
       />
       <button class="enter-button" id="enterButton">엔터</button>
     </div>
+    <div class="ground"></div>
   </div>
 
   <script>
     const textInput = document.getElementById("textInput");
     const enterButton = document.getElementById("enterButton");
     const container = document.querySelector(".falling-container");
+    const ground = document.querySelector(".ground");
     const fallingTexts = [];
     const gravity = 1; // 중력 가속도
     const bounce = 0.5; // 반발 계수
     const threshold = 0.1; // 멈추는 속도 임계값
+    const groundHeight = 1080; // 바닥의 y 위치
 
     // 엔터 버튼 클릭 이벤트 추가
     enterButton.addEventListener("click", () => {
@@ -158,8 +153,6 @@
     }
 
     function update() {
-      const containerHeight = window.innerHeight;
-
       fallingTexts.forEach(item => {
         if (item.fixed) return; // 고정된 글자는 무시
 
@@ -167,39 +160,9 @@
         item.vy += gravity;
         item.y += item.vy;
 
-        let hasCollision = false;
-
-        // 다른 글자와의 충돌 감지
-        fallingTexts.forEach(other => {
-          if (item === other || other.fixed === false) return;
-
-          const rect1 = item.element.getBoundingClientRect();
-          const rect2 = other.element.getBoundingClientRect();
-
-          if (
-            rect1.left < rect2.right &&
-            rect1.right > rect2.left &&
-            rect1.top < rect2.bottom &&
-            rect1.bottom > rect2.top
-          ) {
-            hasCollision = true;
-            item.y = other.y - rect1.height;
-
-            // 바운스 횟수 증가 및 속도 감소
-            item.vy *= -bounce;
-            item.bounceCount += 1;
-
-            // 속도나 바운스 횟수가 임계값에 도달하면 고정
-            if (Math.abs(item.vy) < threshold || item.bounceCount > 3) {
-              item.vy = 0;
-              item.fixed = true;
-            }
-          }
-        });
-
         // 바닥 충돌 처리
-        if (item.y + element.offsetHeight > containerHeight) {
-          item.y = containerHeight - element.offsetHeight;
+        if (item.y + element.offsetHeight >= groundHeight) {
+          item.y = groundHeight - element.offsetHeight;
 
           // 바운스 횟수 증가 및 속도 감소
           item.vy *= -bounce;
