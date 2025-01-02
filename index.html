@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Falling Text with Enter Button</title>
   <style>
     html, body {
@@ -30,12 +31,14 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      padding: 10px;
+      box-sizing: border-box;
     }
 
     #textInput {
-      width: 200px;
+      flex: 1; /* 버튼과의 간격 자동 조정 */
       padding: 10px 0;
-      font-size: 16px;
+      font-size: 18px;
       text-align: center;
       background: none; /* 배경 제거 */
       color: #fff; /* 폰트 색상 흰색 */
@@ -49,8 +52,8 @@
     }
 
     .enter-button {
-      width: 50px;
-      height: 36px;
+      width: 60px;
+      height: 40px;
       background: #fff;
       border: none;
       border-radius: 5px;
@@ -69,6 +72,23 @@
       transform: translateX(-50%);
       font-weight: bold;
       color: #fff; /* 글자 색상을 흰색으로 */
+    }
+
+    @media (max-width: 600px) {
+      .input-container {
+        flex-direction: column; /* 세로 정렬 */
+        gap: 15px;
+      }
+
+      #textInput {
+        width: 90%; /* 모바일 화면 크기에 맞게 */
+      }
+
+      .enter-button {
+        width: 90%; /* 모바일 화면에서 버튼도 동일 너비 */
+        height: 50px;
+        font-size: 18px;
+      }
     }
   </style>
 </head>
